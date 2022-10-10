@@ -92,9 +92,9 @@ namespace FaceRecognitionMain
                         }
 
 
-                        if (btnSave.InvokeRequired)
+                        if (btnSavePerson.InvokeRequired)
                         {
-                            btnSave.Invoke(new ThreadStart(delegate { btnSave.Enabled = true; }));
+                            btnSavePerson.Invoke(new ThreadStart(delegate { btnSavePerson.Enabled = true; }));
                         }
 
 
@@ -112,7 +112,7 @@ namespace FaceRecognitionMain
                                     new Point(face.X - 2, face.Y - 2),
                                     FontFace.HersheyComplex, 1.0, new Bgr(Color.Green).MCvScalar);
                                 CvInvoke.Rectangle(_currentFrame, face, new Bgr(Color.Green).MCvScalar, 2);
-                                btnSave.Enabled = false;
+                                btnSavePerson.Enabled = false;
                             }
                             //here results did not find any know faces
                             else
@@ -120,7 +120,7 @@ namespace FaceRecognitionMain
                                 CvInvoke.PutText(_currentFrame, "Unknown", new Point(face.X - 2, face.Y - 2),
                                     FontFace.HersheyComplex, 1.0, new Bgr(Color.Red).MCvScalar);
                                 CvInvoke.Rectangle(_currentFrame, face, new Bgr(Color.Red).MCvScalar, 2);
-                                btnSave.Enabled = true;
+                                btnSavePerson.Enabled = true;
                             }
                         }
                     }
@@ -163,7 +163,6 @@ namespace FaceRecognitionMain
                 {
                     _recognizer = new EigenFaceRecognizer(imagesCount, threshold);
                     _recognizer.Train(_trainedFaces.ToArray(), _personsLabels.ToArray());
-
                     _isTrained = true;
                 }
                 else
@@ -178,17 +177,17 @@ namespace FaceRecognitionMain
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnStartRec_Click(object sender, EventArgs e)
         {
             _enableRecognition = true;
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnStopRec_Click(object sender, EventArgs e)
         {
             _enableRecognition = false;
             txtPersonName.Text = "";
             txtPersonName.Enabled = true;
-            btnSave.Enabled = true;
+            btnSavePerson.Enabled = true;
         }
     }
 }

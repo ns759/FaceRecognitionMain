@@ -32,11 +32,11 @@
             this.pictureBoxMain = new System.Windows.Forms.PictureBox();
             this.pictureBoxDetected = new System.Windows.Forms.PictureBox();
             this.txtPersonName = new System.Windows.Forms.TextBox();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.btnSavePerson = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnStartRec = new System.Windows.Forms.Button();
+            this.btnStopRec = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDetected)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -66,15 +66,15 @@
             this.txtPersonName.Size = new System.Drawing.Size(280, 26);
             this.txtPersonName.TabIndex = 2;
             // 
-            // btnSave
+            // btnSavePerson
             // 
-            this.btnSave.Location = new System.Drawing.Point(866, 44);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(280, 60);
-            this.btnSave.TabIndex = 3;
-            this.btnSave.Text = "Save person";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSavePerson.Location = new System.Drawing.Point(866, 44);
+            this.btnSavePerson.Name = "btnSavePerson";
+            this.btnSavePerson.Size = new System.Drawing.Size(280, 60);
+            this.btnSavePerson.TabIndex = 3;
+            this.btnSavePerson.Text = "Save person";
+            this.btnSavePerson.UseVisualStyleBackColor = true;
+            this.btnSavePerson.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // pictureBox1
             // 
@@ -92,36 +92,36 @@
             this.pictureBox2.TabIndex = 5;
             this.pictureBox2.TabStop = false;
             // 
-            // button1
+            // btnStartRec
             // 
-            this.button1.Location = new System.Drawing.Point(660, 234);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(250, 42);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Start recognition";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnStartRec.Location = new System.Drawing.Point(660, 234);
+            this.btnStartRec.Name = "btnStartRec";
+            this.btnStartRec.Size = new System.Drawing.Size(250, 42);
+            this.btnStartRec.TabIndex = 6;
+            this.btnStartRec.Text = "Start recognition";
+            this.btnStartRec.UseVisualStyleBackColor = true;
+            this.btnStartRec.Click += new System.EventHandler(this.btnStartRec_Click);
             // 
-            // button2
+            // btnStopRec
             // 
-            this.button2.Location = new System.Drawing.Point(916, 234);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(250, 42);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Stop recognition";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnStopRec.Location = new System.Drawing.Point(916, 234);
+            this.btnStopRec.Name = "btnStopRec";
+            this.btnStopRec.Size = new System.Drawing.Size(250, 42);
+            this.btnStopRec.TabIndex = 7;
+            this.btnStopRec.Text = "Stop recognition";
+            this.btnStopRec.UseVisualStyleBackColor = true;
+            this.btnStopRec.Click += new System.EventHandler(this.btnStopRec_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1178, 544);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnStopRec);
+            this.Controls.Add(this.btnStartRec);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.btnSavePerson);
             this.Controls.Add(this.txtPersonName);
             this.Controls.Add(this.pictureBoxDetected);
             this.Controls.Add(this.pictureBoxMain);
@@ -136,14 +136,14 @@
             this.PerformLayout();
         }
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnStartRec;
+        private System.Windows.Forms.Button btnStopRec;
 
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
 
         private System.Windows.Forms.TextBox txtPersonName;
-        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnSavePerson;
 
         private System.Windows.Forms.PictureBox pictureBoxDetected;
 
