@@ -46,88 +46,88 @@ namespace FaceRecognitionMain
         [SuppressMessage("ReSharper.DPA", "DPA0001: Memory allocation issues")]
         private void ProcessFrame(object sender, EventArgs e)
         {
-            if ( /*_videoCapture != null &&*/ _videoCapture.Ptr != IntPtr.Zero)
+            // ReSharper disable once InvertIf
+            if (_videoCapture.Ptr == IntPtr.Zero) return;
+            _videoCapture.Retrieve(_frame);
+            _currentFrame = _frame.ToImage<Bgr, byte>()
+                .Resize(pictureBoxMain.Width, pictureBoxMain.Height, Inter.Cubic);
+
+            var grayImage = new Mat();
+            CvInvoke.CvtColor(_currentFrame, grayImage, ColorConversion.Bgr2Gray);
+            //Enhance the image to get better result
+            CvInvoke.EqualizeHist(grayImage, grayImage);
+
+            var faces = _faceCascadeClassifier.DetectMultiScale(grayImage, 1.1, 3, Size.Empty, Size.Empty);
+            //If faces detected
+            if (faces.Length > 0)
             {
-                _videoCapture.Retrieve(_frame);
-                _currentFrame = _frame.ToImage<Bgr, byte>()
-                    .Resize(pictureBoxMain.Width, pictureBoxMain.Height, Inter.Cubic);
-
-                var grayImage = new Mat();
-                CvInvoke.CvtColor(_currentFrame, grayImage, ColorConversion.Bgr2Gray);
-                //Enhance the image to get better result
-                CvInvoke.EqualizeHist(grayImage, grayImage);
-
-                var faces = _faceCascadeClassifier.DetectMultiScale(grayImage, 1.1, 3, Size.Empty, Size.Empty);
-                //If faces detected
-                if (faces.Length > 0)
+                foreach (var face in faces)
                 {
-                    foreach (var face in faces)
+                    //Drawing square around each face 
+                    CvInvoke.Rectangle(_currentFrame, face, new Bgr(Color.Yellow).MCvScalar, 2);
+
+                    //Assign the face to the pictureBoxDetected
+                    var resultImage = _currentFrame.Convert<Bgr, byte>();
+                    resultImage.ROI = face;
+                    pictureBoxDetected.SizeMode = StretchImage;
+                    pictureBoxDetected.Image = resultImage.Bitmap;
+
+                    //Adding new person
+                    if (_enableSaveImage)
                     {
-                        //Drawing square around each face 
-                        CvInvoke.Rectangle(_currentFrame, face, new Bgr(Color.Yellow).MCvScalar, 2);
-
-                        //Assign the face to the pictureBoxDetected
-                        var resultImage = _currentFrame.Convert<Bgr, byte>();
-                        resultImage.ROI = face;
-                        pictureBoxDetected.SizeMode = StretchImage;
-                        pictureBoxDetected.Image = resultImage.Bitmap;
-
-                        //Adding new person
-                        if (_enableSaveImage)
+                        //Searching for or creating a directory for the trained images
+                        if (!Directory.Exists(_path))
+                            Directory.CreateDirectory(_path);
+                        Task.Factory.StartNew(() =>
                         {
-                            //Searching for or creating a directory for the trained images
-                            if (!Directory.Exists(_path))
-                                Directory.CreateDirectory(_path);
-                            Task.Factory.StartNew(() =>
+                            //Resizing and saving 10 images to the directory
+                            for (var i = 0; i < 10; i++)
                             {
-                                //Resizing and saving 10 images to the directory
-                                for (var i = 0; i < 10; i++)
-                                {
-                                    resultImage.Resize(200, 200, Inter.Cubic).Save(_path + @"\" + txtPersonName.Text +
-                                        "_" + DateTime.Now.ToString("dd-mm-yyyy-hh-mm-ss") + ".jpg");
-                                    Thread.Sleep(1000);
-                                }
-                            });
-                            _enableSaveImage = false;
-                        }
-
-
-                        if (btnSavePerson.InvokeRequired)
-                        {
-                            btnSavePerson.Invoke(new ThreadStart(delegate { btnSavePerson.Enabled = true; }));
-                        }
-
-
-                        if (_isTrained && _enableRecognition)
-                        {
-                            var grayFaceResult = resultImage.Convert<Gray, byte>().Resize(200, 200, Inter.Cubic);
-                            CvInvoke.EqualizeHist(grayFaceResult, grayFaceResult);
-                            var result = _recognizer.Predict(grayFaceResult);
-                            pictureBox1.Image = grayFaceResult.Bitmap;
-                            pictureBox2.Image = _trainedFaces[result.Label].Bitmap;
-                            //Here results found known faces
-                            if (result.Label != -1 && result.Distance < 2000)
-                            {
-                                CvInvoke.PutText(_currentFrame, _personsNames[result.Label],
-                                    new Point(face.X - 2, face.Y - 2),
-                                    FontFace.HersheyComplex, 1.0, new Bgr(Color.Green).MCvScalar);
-                                CvInvoke.Rectangle(_currentFrame, face, new Bgr(Color.Green).MCvScalar, 2);
-                                btnSavePerson.Enabled = false;
+                                resultImage.Resize(200, 200, Inter.Cubic).Save(_path + @"\" + txtPersonName.Text +
+                                                                               "_" + DateTime.Now.ToString(
+                                                                                   "dd-mm-yyyy-hh-mm-ss") + ".jpg");
+                                Thread.Sleep(1000);
                             }
-                            //here results did not find any know faces
-                            else
-                            {
-                                CvInvoke.PutText(_currentFrame, "Unknown", new Point(face.X - 2, face.Y - 2),
-                                    FontFace.HersheyComplex, 1.0, new Bgr(Color.Red).MCvScalar);
-                                CvInvoke.Rectangle(_currentFrame, face, new Bgr(Color.Red).MCvScalar, 2);
-                                btnSavePerson.Enabled = true;
-                            }
+                        });
+                        _enableSaveImage = false;
+                    }
+
+
+                    if (btnSavePerson.InvokeRequired)
+                    {
+                        btnSavePerson.Invoke(new ThreadStart(delegate { btnSavePerson.Enabled = true; }));
+                    }
+
+                    // ReSharper disable once InvertIf
+                    if (_isTrained && _enableRecognition)
+                    {
+                        var grayFaceResult = resultImage.Convert<Gray, byte>().Resize(200, 200, Inter.Cubic);
+                        CvInvoke.EqualizeHist(grayFaceResult, grayFaceResult);
+                        var result = _recognizer.Predict(grayFaceResult);
+                        pictureBox1.Image = grayFaceResult.Bitmap;
+                        pictureBox2.Image = _trainedFaces[result.Label].Bitmap;
+                        //Here results found known faces
+                        if (result.Label != -1 && result.Distance < 2000)
+                        {
+                            CvInvoke.PutText(_currentFrame, _personsNames[result.Label],
+                                new Point(face.X - 2, face.Y - 2),
+                                FontFace.HersheyComplex, 1.0, new Bgr(Color.Green).MCvScalar);
+                            CvInvoke.Rectangle(_currentFrame, face, new Bgr(Color.Green).MCvScalar, 2);
+                            btnSavePerson.Enabled = false;
+                        }
+                        //here results did not find any know faces
+                        else
+                        {
+                            CvInvoke.PutText(_currentFrame, "Unknown", new Point(face.X - 2, face.Y - 2),
+                                FontFace.HersheyComplex, 1.0, new Bgr(Color.Red).MCvScalar);
+                            CvInvoke.Rectangle(_currentFrame, face, new Bgr(Color.Red).MCvScalar, 2);
+                            btnSavePerson.Enabled = true;
                         }
                     }
                 }
-
-                pictureBoxMain.Image = _currentFrame.Bitmap;
             }
+
+            pictureBoxMain.Image = _currentFrame.Bitmap;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
